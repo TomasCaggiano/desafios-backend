@@ -1,36 +1,19 @@
-import { ProductsManager } from './ProductsManager';
+import express from 'express';
+import { ProductsManager } from './productsManager.js';
 import {http} from 'http';
-import {express} from 'express';
+import { productsRouter } from './routes/products.router.js';
 
-const server = http.CreateServer((req,res) => {})
-const products = new ProductsManager(path)
 
-server.listen (8080)
 
-app.use(express.urlencoded({extended:true}))
+const app = express ();
 
-app.get('/products', (req,res)=>{
-    const limit = req.query.limit
-    if (!limit) {
-        return res.send(products.getProducts())}
-    const productsLimit = products.keys(products=>products.limit<=limit);
-        return res.send(productsLimit)
-})
+export const productsManager = new ProductsManager;
 
-app.get('/products/:pid',(req,res)=>{
-    console.log(req.params.pid)
-    let getProductById = async(pid) => {
-        try {
-            const products = await this.readFile()
-            const product =  products.find(prod => prod.id === pid) 
+app.use('/products', productsRouter)
+app.use(express.json())
 
-            if(!product) return 'producto no encontrado'
 
-            return product
-        } catch (error) {
-            console.log(error)
-        }
-    }
-    res.send(getProductById)
-})
+app.listen (8080, (req, res)=>{
+    console.log('server escuchando correctamente el puerto 8080')
 
+}) 

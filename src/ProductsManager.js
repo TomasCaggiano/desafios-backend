@@ -1,8 +1,9 @@
 const fs = require ('node:fs')
 
-class ProductsManager{
+export class ProductsManager{
     constructor(path){
-        this.path = path
+        this.path = 'products.json';
+        this.products = []
     }
     
     readFile = async()=>{
@@ -14,19 +15,21 @@ class ProductsManager{
         };
     }
 
-    addProducts = async(product) => {
+    addProducts = async({title, description, price, thumbnail, code, stock, status = true, category}) => {
         try {
-            const products = await this.readFile()
+            const productsid =  await this.readFile()
 
-            if(products.length === 0){
+            if(productsid.length === 0){
                 product.id = 1
             } else {
-                product.id = products[products.length-1].id+1
+                product.id = productsid[productsid.length-1].id+1
             }
+            let newProduct = {productsid, title, description, price, thumbnail, code, stock, status, category}
             
-            products.push(product)
-            await fs.promises.writeFile(this.path, JSON.stringify(products), 'utf-8')
-            return products
+            this.products = await this.getProducts()
+            this.products.push(newProduct)
+            await fs.promises.writeFile(this.path, JSON.stringify(this.products), 'utf-8')
+            return newProduct;
         } catch (error) {
             console.log(error)
         }
@@ -47,7 +50,7 @@ class ProductsManager{
             const products = await this.readFile()
             const product =  products.find(prod => prod.id === pid) 
 
-            if(!product) return 'producto no encontrado'
+            if(!product) return 'producto no encontrado'    
 
             return product
         } catch (error) {
@@ -58,34 +61,27 @@ class ProductsManager{
     updateProduct = async(pid, productUpdate) => {
 try {
     const products = await this.readFile()
-    const product =  products.find(prod => prod.id === pid)
-    if(!product) return 'producto no encontrado'
-    await fs.promises.writeFile(this.path, JSON.stringify(productUpdate), 'utf-8')
-    return  productUpdate = product({
-        title: '',
-        price: '',
-        stock: '',
-        category: '',
-        code: ''
-    })
-
+    const product = response.findIndex(prod => prod.id === pid)
+    if(product !== -1){
+        products[product] = {id, productUpdate}
+        await fs.writeFile(this.path, JSON.stringify(products), 'utf-8')
+        return products[product]
+    }else{
+        return 'producto no encontrado'
+    }
 
 } catch (error) {
     console.log(error)
 }
     }
 
-    deleteProduct = async(pid) => {try {
+    deleteProduct = async(pid) => {
         const products = await this.readFile()
         const product =  products.find(prod => prod.id === pid)
-        if(!product) return 'producto no encontrado'
-        await fs.promises.unlink(this.path, JSON.stringify(products), 'utf-8')
-        return products
-    } catch (error) {
-        console.log(error)
+        if(product !== 1) {products.splice(product, 1)
+        await fs.writeFile(this.path, JSON.stringify(products), 'utf-8')
+        return products}
+    else{ 
+        return 'producto no encontrado'
     }}
-}
-
-module.exports = {
-    ProductsManager
 }
