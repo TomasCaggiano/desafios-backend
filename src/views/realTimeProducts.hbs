@@ -1,0 +1,72 @@
+<main>
+  <div class="bienvenida">
+    <h1>Hola {{username}} Bienvenido a nuestro e-commerce</h1>
+    <h2> {{nombre}} {{apellido}} Aquí se pueden editar los productos</h2>
+  <a href="/" class="btn btn-dark">Ir a la vista de inicio</a>
+  </div>
+    {{#if admin}}
+      <div class="container-fluid h-100 ">
+        <div class="row h-100 ">
+
+          <div class="my-3 col-3 d-flex justify-content-center">
+              <form id="productForm" class="rounded-0" >
+                  <div class="card" id="newProdDetails" style="min-width: 380px;">
+                    <h3 id="editBoxTitle" class="mx-auto">Agregar nuevo producto</h3>
+                      <p class="detail-item" >Title: <input type="text" id="newProdTitle" required></p>
+                      <p class="detail-item">Descripción: 
+                        <textarea name="newProdDescription" id="newProdDescription" rows="6" required></textarea>
+                        </p>
+                      <p class="detail-item">Código: <input type="text" id="newProdCode" required></p>
+                      <p class="detail-item">Precio: <input type="text" id="newProdPrice" required></p>
+                      <p class="detail-item chk-boton">Activo: <input type="checkbox" id="btn-switch"><label for="btn-switch" class="lbl-switch"></label></p>
+                      <p class="detail-item">Stock: <input type="text" id="newProdStock" required></p>
+                      <p class="detail-item">Categoría: <input type="text" id="newProdCategory" required></p>
+                      <p class="detail-item">Rutas de Imagenes, separadas por coma (,)   </p>
+                      <textarea rows="6" id="newProdFileNames"></textarea> 
+
+                      <button class="btn btn-dark btn-save rounded-0" >Guardar</button>
+                      <button class="btn btn-warning mt-2 btn-cancel rounded-0" style="display: none;">Cancelar</button>
+                  </div>
+              </form>
+          </div>
+
+          <div class=" px-3 py-3 col-9 d-flex flex-wrap" id="realTimeProductsArea">
+
+          </div>
+        </div>
+      </div>
+    {{else}}
+    <div class="container">
+      <h2 style="color: rgb(177, 24, 24);">
+        Necesitas permisos de administrador para editar los productos
+      </h2>
+    </div>
+    {{/if}}
+</main>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/editProducts.js"></script>
+<script src="/js/realTimeProducts.js"></script>
+
+<script>
+ Swal.fire({
+   title: "Vista rentringida",
+   input: "text",
+   allowOutsideClick: false,
+   allowEscapeKey : false,
+   inputLabel: "Solo el usuario 'admin' tiene acceso",
+   inputValidator: (value) => {
+     if (!value) {
+       return "Debes indicar un nombre!";
+     }
+     return new Promise((resolve) => {
+       if (value === "admin") {
+         resolve();
+       } else {
+         resolve("solo el usuario admin tiene acceso :)");
+       }
+     });
+   }
+ });
+
+
+</script>
